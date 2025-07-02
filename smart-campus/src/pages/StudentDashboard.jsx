@@ -1,6 +1,8 @@
 import React from 'react';
 import './StudentDashboard.css';
+import { Link } from 'react-router-dom';
 import { Bar, Line } from 'react-chartjs-2';
+import Layout from '../components/Layout'; // adjust path if needed
 import {
   Chart as ChartJS,
   BarElement,
@@ -9,8 +11,20 @@ import {
   PointElement,
   LineElement,
   Legend,
-  Tooltip
+  Tooltip,
+  Filler // ✅ This line is required
 } from 'chart.js';
+
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Legend,
+  Tooltip,
+  Filler // ✅ This registers the fill behavior
+);
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, PointElement, LineElement, Legend, Tooltip);
 
@@ -57,6 +71,8 @@ const StudentDashboard = () => {
   };
 
   return (
+    <Layout>
+    
     <div className="container-fluid mainBody p-4 min-vh-100">
       {/* Header Section */}
       <div className="d-flex header justify-content-between align-items-center mb-3">
@@ -74,19 +90,25 @@ const StudentDashboard = () => {
 
       {/* Nav Buttons */}
     <div className="d-flex nav-bar gap-5 mb-4 flex-wrap"> 
-  {['Home', 'Schedule', 'Course Setup', 'Result', 'Fees', 'Other', 'Mentor'].map((item, index) => (
-    <button
-      key={index}
-      className="btn no-border"
-      style={{
-        fontWeight: 'bold',
-        fontSize: '1.2rem', // increase size here
-        color: '#000'       // optional: make sure text color is visible
-      }}
-    >
-      <i className={`bi bi-${index % 2 === 0 ? 'house' : 'book'}`}></i> {item}
-    </button>
-  ))}
+  {[
+  { name: 'Home', to: '/student' },
+  { name: 'Schedule', to: '#' },
+  { name: 'Course Setup', to: '#' },
+  { name: 'Result', to: '/result' },
+  { name: 'Fees', to: '/fees' },
+  { name: 'Other', to: '#' },
+  { name: 'Mentor', to: '#' }
+].map((item, index) => (
+  <Link
+    key={index}
+    to={item.to}
+    className="btn no-border"
+    style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#000' }}
+  >
+    <i className={`bi bi-${index % 2 === 0 ? 'house' : 'book'}`}></i> {item.name}
+  </Link>
+))}
+
 </div>
 
 
@@ -195,6 +217,8 @@ const StudentDashboard = () => {
         </div>
       </div>
     </div>
+    {/* your student dashboard content */}
+  </Layout>
   );
 };
 
