@@ -92,12 +92,12 @@ const StudentDashboard = () => {
     <div className="d-flex nav-bar gap-5 mb-4 flex-wrap"> 
   {[
   { name: 'Home', to: '/student' },
-  { name: 'Schedule', to: '#' },
-  { name: 'Course Setup', to: '#' },
+  { name: 'Schedule', to: '/schedule' },
+  { name: 'CourseSetup', to: '/CourseSetup' },
   { name: 'Result', to: '/result' },
   { name: 'Fees', to: '/fees' },
-  { name: 'Other', to: '#' },
-  { name: 'Mentor', to: '#' }
+  { name: 'Other', to: '/Others' },
+  { name: 'Mentor', to: '/Mentor' }
 ].map((item, index) => (
   <Link
     key={index}
