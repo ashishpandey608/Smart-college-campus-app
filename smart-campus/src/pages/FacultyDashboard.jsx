@@ -215,12 +215,12 @@ const FacultyDashboard = () => {
                    <div className="d-flex nav-bar gap-5 mb-4 flex-wrap">
                  {[
                  { name: 'Home', to: '/faculty' },
-                 { name: 'Exam', to: '/#' },
-                 { name: 'Course Setup', to: '/faculty-course-setup' },
-                 { name: 'Grading', to: '/' },
-                 { name: 'Assignment', to: '/' },
-                 { name: 'Duties', to: '/' },
-                 { name: 'Mentor', to: '/Mentor' }
+                 { name: 'Exam', to: '' },
+                 { name: 'Course-Setup', to: '/Course-Setup' },
+                 { name: 'Grading', to: '' },
+                 { name: 'Assignment', to: '' },
+                 { name: 'Duties', to: '' },
+                 { name: 'Mentor', to: '' }
                ].map((item, index) => (
                  <Link
                    key={index}

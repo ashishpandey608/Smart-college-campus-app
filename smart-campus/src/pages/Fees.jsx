@@ -1,184 +1,293 @@
-import React from 'react';
-import Layout from '../components/Layout';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import logo from '../assets/campuscore.jpeg';
+// --- Reusable Helper Components for Fees Page ---
+
+// Fees Overview Card
+const FeesOverviewCard = () => {
+    const overviewItems = [
+        { title: 'Total Fees', amount: '₹12,500', icon: 'bi-wallet-fill', color: 'primary' },
+        { title: 'Amount Paid', amount: '₹8,750', icon: 'bi-check-circle-fill', color: 'success' },
+        { title: 'Pending Balance', amount: '₹3,750', icon: 'bi-hourglass-split', color: 'warning' },
+        { title: 'Last Payment', amount: 'May 15', icon: 'bi-calendar2-check-fill', color: 'info' },
+    ];
+
+    return (
+        <div className="card shadow-sm mb-4">
+            <div className="card-header bg-body d-flex justify-content-between align-items-center p-3">
+                <h5 className="mb-0 fw-bold">Fees Overview</h5>
+                <span className="text-muted small">Spring Semester 2025</span>
+            </div>
+            <div className="card-body p-4">
+                <div className="row g-3 text-center">
+                    {overviewItems.map(item => (
+                        <div className="col-md-3" key={item.title}>
+                            <div className={`p-3 bg-${item.color}-subtle rounded-3`}>
+                                <i className={`bi ${item.icon} fs-4 text-${item.color}`}></i>
+                                <p className="small fw-semibold mt-2 mb-1">{item.title}</p>
+                                <h5 className="fw-bold mb-0">{item.amount}</h5>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Payment History Table
+const PaymentHistory = () => {
+    const history = [
+      { date: 'May 15, 2025', id: 'FT6543281', desc: 'Tuition Fee (Installment 3)', amt: '3,750', mode: 'Credit Card', status: 'Completed' },
+      { date: 'April 10, 2025', id: 'FT7634920', desc: 'Tuition Fee (Installment 2)', amt: '2,500', mode: 'Bank Transfer', status: 'Completed' },
+      { date: 'February 5, 2025', id: 'FT3412890', desc: 'Tuition Fee (Installment 1)', amt: '3,250', mode: 'Credit Card', status: 'Completed' },
+      { date: 'January 21, 2025', id: 'TR9823674', desc: 'Registration Fee', amt: '500', mode: 'UPI', status: 'Completed' },
+    ];
+
+    return (
+        <div className="card shadow-sm mb-4">
+             <div className="card-header bg-body d-flex justify-content-between align-items-center p-3">
+                <h5 className="mb-0 fw-bold">Payment History</h5>
+                <div className="input-group input-group-sm w-auto">
+                    <span className="input-group-text bg-light-subtle border-0"><i className="bi bi-search"></i></span>
+                    <input type="text" className="form-control bg-light-subtle border-0" placeholder="Search transactions..."/>
+                </div>
+            </div>
+            <div className="card-body p-4">
+                <div className="table-responsive">
+                    <table className="table table-hover table-borderless">
+                        <thead className="table-light">
+                            <tr>
+                                <th className="small text-muted">Date</th>
+                                <th className="small text-muted">Transaction ID</th>
+                                <th className="small text-muted">Description</th>
+                                <th className="small text-muted">Amount</th>
+                                <th className="small text-muted">Mode</th>
+                                <th className="small text-muted">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {history.map(item => (
+                                <tr key={item.id}>
+                                    <td className="small align-middle">{item.date}</td>
+                                    <td className="small align-middle"><a href="#" className="fw-semibold text-decoration-none">{item.id}</a></td>
+                                    <td className="small align-middle">{item.desc}</td>
+                                    <td className="small align-middle">₹{item.amt}</td>
+                                    <td className="small align-middle">{item.mode}</td>
+                                    <td className="small align-middle"><span className="badge bg-success-subtle text-success-emphasis rounded-pill">{item.status}</span></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                    <p className="small text-muted mb-0">Showing 4 of 12 entries</p>
+                    <nav>
+                        <ul className="pagination pagination-sm mb-0">
+                            <li className="page-item disabled"><a className="page-link" href="#">&laquo;</a></li>
+                            <li className="page-item active"><a className="page-link" href="#">1</a></li>
+                            <li className="page-item"><a className="page-link" href="#">2</a></li>
+                            <li className="page-item"><a className="page-link" href="#">3</a></li>
+                            <li className="page-item"><a className="page-link" href="#">&raquo;</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Upcoming Dues Card
+const UpcomingDues = () => {
+    const dues = [
+        { title: 'Tuition Fee (Final Installment)', due: 'July 21, 2025', amount: '3,750', urgent: true },
+        { title: 'Library Fee', due: 'August 10, 2025', amount: '120', urgent: false },
+        { title: 'Computer Lab Access', due: 'August 10, 2025', amount: '85', urgent: false },
+    ];
+    return (
+        <div className="card shadow-sm">
+             <div className="card-header bg-body d-flex justify-content-between align-items-center p-3">
+                <h5 className="mb-0 fw-bold">Upcoming Dues</h5>
+                <Link to="#" className="text-decoration-none small fw-semibold">View All</Link>
+            </div>
+            <div className="card-body p-4">
+                {dues.map(due => (
+                    <div key={due.title} className={`p-3 rounded-3 mb-3 ${due.urgent ? 'bg-warning-subtle' : 'bg-light-subtle'}`}>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div>
+                                <p className="fw-semibold small mb-1">{due.title}</p>
+                                <p className="text-muted small mb-0">Due by {due.due}</p>
+                                {due.urgent && <p className="text-danger small mb-0 fst-italic">Late payment fee of ₹500 applies after due date</p>}
+                            </div>
+                            <div className="text-end">
+                                <h5 className="fw-bold mb-2">₹{due.amount}</h5>
+                                <button className={`btn btn-sm ${due.urgent ? 'btn-primary' : 'btn-outline-secondary'}`}>
+                                    {due.urgent ? 'Pay Now' : 'Pay Later'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Quick Pay Card
+const QuickPay = () => (
+    <div className="card shadow-sm mb-4">
+        <div className="card-body p-4">
+            <h5 className="card-title fw-bold mb-3">Quick Pay</h5>
+            <div className="d-grid">
+                <button className="btn btn-primary fw-semibold">Pay Outstanding Balance</button>
+            </div>
+            <hr />
+            <p className="fw-semibold small mb-2">Saved Payment Methods</p>
+            <div className="form-check">
+                <input className="form-check-input" type="radio" name="paymentMethod" id="visa" defaultChecked/>
+                <label className="form-check-label small" htmlFor="visa">Visa ending in 4562</label>
+            </div>
+             <div className="form-check">
+                <input className="form-check-input" type="radio" name="paymentMethod" id="bank"/>
+                <label className="form-check-label small" htmlFor="bank">Bank Account</label>
+            </div>
+            <div className="d-grid mt-2">
+                <button className="btn btn-light btn-sm">+ Add Payment Method</button>
+            </div>
+             <hr />
+            <p className="fw-semibold small mb-2">Receipts & Documents</p>
+            <div className="d-grid gap-2">
+                <button className="btn btn-light btn-sm"><i className="bi bi-download me-2"></i>Download All Receipts</button>
+                <button className="btn btn-light btn-sm"><i className="bi bi-printer me-2"></i>Print Fee Statement</button>
+            </div>
+        </div>
+    </div>
+);
+
+// Help & Support Card
+const HelpSupport = () => (
+    <div className="card shadow-sm">
+        <div className="card-body p-4">
+             <h5 className="card-title fw-bold mb-3">Help & Support</h5>
+             <ul className="list-unstyled">
+                 <li className="mb-3">
+                     <p className="fw-semibold small mb-1">Payment FAQs</p>
+                     <p className="small text-muted">Answers to common questions about fees and payments.</p>
+                     <Link to="#" className="text-decoration-none small fw-semibold">View FAQs</Link>
+                 </li>
+                 <li className="mb-3 pt-3 border-top">
+                     <p className="fw-semibold small mb-1">Contact Finance Office</p>
+                     <p className="small text-muted">Need help with your payment? Reach out to our finance team for support.</p>
+                     <a href="tel:+911234567890" className="text-decoration-none small fw-semibold">+91 123 456 7890</a>
+                 </li>
+                 <li className="pt-3 border-top">
+                     <p className="fw-semibold small mb-1">Schedule an Appointment</p>
+                     <p className="small text-muted">Book a dedicated slot with a financial advisor for personalized assistance.</p>
+                     <Link to="#" className="text-decoration-none small fw-semibold">Book Appointment</Link>
+                 </li>
+             </ul>
+        </div>
+    </div>
+);
+
+
+// --- Main Fees Component ---
 
 const Fees = () => {
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-bs-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+
+  const navItems = ['Home', 'Schedule', 'Course Setup', 'Result', 'Fees', 'Other', 'Mentor'];
+  const navIcons = ['house-door-fill', 'calendar-week-fill', 'book-fill', 'bar-chart-fill', 'receipt', 'three-dots', 'person-lines-fill'];
+
   return (
-    <Layout>
-      <div className="container">
-
-        {/* 🔷 Updated Top Banner */}
-        <div className="bg-white p-4 rounded-3 d-flex justify-content-between align-items-center mb-4 shadow-sm">
-          <div className="p-3 rounded text-white" style={{ background: 'linear-gradient(to right, #6366F1, #6D28D9)', width: '100%' }}>
-            <div className="d-flex justify-content-between align-items-center">
-              <div>
-                <h5 className="fw-bold mb-1">Welcome back, Dev!</h5>
-                <p className="mb-0 small">
-                  Wednesday, June 11, 2025 | Spring Semester 2025<br />
-                  Student ID: ST2023456
-                </p>
-              </div>
-              <div className="d-flex align-items-center gap-3 bg-white text-dark p-3 rounded shadow-sm" style={{ minWidth: '270px' }}>
-                <i className="bi bi-calendar-event-fill fs-3 text-primary"></i>
-                <div>
-                  <small className="text-muted">Next Class</small><br />
-                  <span className="fw-semibold text-primary">Advanced Mathematics in 45 minutes</span>
+    <div className="bg-body-tertiary">
+      <div className="container-fluid p-4">
+        {/* Header */}
+        <header className="navbar navbar-expand-lg bg-body rounded-3 shadow-sm p-3 mb-4">
+            <Link className="navbar-brand" to="#">
+                  <img src={logo} alt="Campus Core Logo" style={{height: '40px'}}/>
+            </Link>
+            <div className="d-flex align-items-center ms-auto">
+                <button className="btn btn-link text-secondary"><i className="bi bi-search fs-5"></i></button>
+                <div className="form-check form-switch mx-3">
+                    <input className="form-check-input" type="checkbox" role="switch" id="theme-switch-fees" onChange={toggleTheme} checked={theme === 'dark'}/>
                 </div>
-              </div>
+                <button className="btn btn-link text-secondary"><i className="bi bi-bell fs-5"></i></button>
+                <div className="dropdown">
+                    <button className="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                        <img src="https://placehold.co/32x32/EFEFEF/000000?text=D" alt="Dev" className="rounded-circle me-2"/>
+                        <span className="small fw-semibold">Dev</span>
+                    </button>
+                </div>
             </div>
-          </div>
-        </div>
+        </header>
 
-        {/* 🔷 Updated Navigation Bar */}
-        <div className="bg-white rounded-pill d-flex justify-content-between align-items-center px-3 py-2 mb-4 shadow-sm" style={{ overflowX: 'auto' }}>
-          {[
-            { icon: 'house', label: 'Home', path: '/student' },
-            { icon: 'calendar2-week', label: 'Schedule', path: '/Schedule' },
-            { icon: 'book', label: 'Course Setup', path: '#' },
-            { icon: 'graph-up', label: 'Result', path: '/result' },
-            { icon: 'receipt', label: 'Fees', path: '/fees' },
-            { icon: 'three-dots', label: 'Other', path: '/others' },
-            { icon: 'person-lines-fill', label: 'Mentor', path: '/mentor' },
-          ].map((nav, i) => (
-            <a key={i} href={nav.path} className="text-dark text-decoration-none text-center small px-3">
-              <div className="d-flex flex-column align-items-center">
-                <i className={`bi bi-${nav.icon} fs-5`}></i>
-                <strong style={{ fontSize: '0.9rem' }}>{nav.label}</strong>
-              </div>
-            </a>
-          ))}
+        {/* Welcome Banner */}
+        <div className="p-4 rounded-3 shadow-lg mb-4 text-white d-flex justify-content-between align-items-center" style={{background: 'linear-gradient(to right, #0d6efd, #6610f2)'}}>
+            <div>
+                <h2 className="fw-bold">Welcome back, Dev!</h2>
+                <p className="small mb-0">Wednesday, June 11, 2025 | Spring Semester 2025</p>
+                <p className="small mb-0">Student ID: ST2023456</p>
+            </div>
+            <div className="p-3 rounded-3 text-center" style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
+                <p className="small mb-1">Next Class</p>
+                <p className="fw-semibold mb-1">Advanced Mathematics</p>
+                <p className="small mb-0">in 45 minutes</p>
+            </div>
         </div>
+        
+        {/* Main Navigation */}
+        {/* Nav Buttons*/ }
+    <div className="d-flex nav-bar gap-5 mb-4 flex-wrap"> 
+  {[
+  { name: 'Home', to: '/student' },
+  { name: 'Schedule', to: '/schedule' },
+  { name: 'CourseSetup', to: '/CourseSetup' },
+  { name: 'Result', to: '/result' },
+  { name: 'Fees', to: '/fees' },
+  { name: 'Other', to: '/Others' },
+  { name: 'Mentor', to: '/Mentor' }
+].map((item, index) => (
+  <Link
+    key={index}
+    to={item.to}
+    className="btn no-border"
+    style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#000' }}
+  >
+    <i className={`bi bi-${index % 2 === 0 ? 'house' : 'book'}`}></i> {item.name}
+  </Link>
+))}
 
-        {/* 🔹 Main Grid */}
+</div>
+
+        {/* Main Content Grid */}
         <div className="row g-4">
-          {/* 🔹 Left Column */}
-          <div className="col-md-8">
-
-            {/* Fees Overview */}
-            <div className="card shadow-sm p-3 mb-4">
-              <div className="d-flex justify-content-between mb-3">
-                <h5 className="mb-0">Fees Overview</h5>
-                <span className="text-muted">Spring Semester 2025</span>
-              </div>
-              <div className="row text-center mb-4">
-                {[
-                  { title: 'Total Fees', amount: '₹12,500', color: 'primary', icon: 'wallet' },
-                  { title: 'Amount Paid', amount: '₹8,750', color: 'success', icon: 'check-circle' },
-                  { title: 'Pending Balance', amount: '₹3,750', color: 'warning', icon: 'hourglass-split' },
-                  { title: 'Last Payment', amount: 'May 15', color: 'purple', icon: 'calendar2-check' },
-                ].map((item, i) => (
-                  <div className="col-6 col-md-3 mb-2" key={i}>
-                    <div className={`p-3 rounded bg-${item.color}-subtle`}>
-                      <div className="d-flex justify-content-center align-items-center gap-2">
-                        <i className={`bi bi-${item.icon} text-${item.color}`}></i>
-                        <small>{item.title}</small>
-                      </div>
-                      <strong className="fs-6 d-block mt-1">{item.amount}</strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Payment History Table */}
-              <div className="table-responsive">
-                <h6 className="mb-2">Payment History</h6>
-                <table className="table table-bordered table-sm">
-                  <thead className="table-light">
-                    <tr>
-                      <th>Date</th>
-                      <th>Transaction ID</th>
-                      <th>Description</th>
-                      <th>Amount</th>
-                      <th>Mode</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { date: 'May 15, 2025', id: 'FT6543281', desc: '3rd Fee Installment', amt: 3750, mode: 'Credit Card' },
-                      { date: 'Apr 6, 2025', id: 'FT7634920', desc: '2nd Fee Installment', amt: 2500, mode: 'Bank' },
-                      { date: 'Feb 2, 2025', id: 'FT3412890', desc: '1st Fee Installment', amt: 3250, mode: 'Credit Card' },
-                      { date: 'Jan 21, 2025', id: 'TR9823674', desc: 'Registration Fee', amt: 500, mode: 'UPI' },
-                    ].map((item, i) => (
-                      <tr key={i}>
-                        <td>{item.date}</td>
-                        <td><a href="#">{item.id}</a></td>
-                        <td>{item.desc}</td>
-                        <td>₹{item.amt}</td>
-                        <td>{item.mode}</td>
-                        <td><span className="badge bg-success">Complete</span></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <div className="col-lg-8">
+                <FeesOverviewCard />
+                <PaymentHistory />
+                <UpcomingDues />
             </div>
-
-            {/* Upcoming Dues */}
-            <div className="card shadow-sm p-3 mb-4">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h6>Upcoming Dues</h6>
-                <a href="#" className="text-primary">View All</a>
-              </div>
-              {[
-                { title: 'Tuition Fee (Final Installment)', due: 'July 21, 2025', amount: '₹3,750', highlight: true },
-                { title: 'Library Fee', due: 'Aug 8, 2025', amount: '₹120' },
-                { title: 'Computer Lab Access', due: 'Aug 22, 2025', amount: '₹85' }
-              ].map((item, i) => (
-                <div key={i} className={`border rounded p-3 mb-2 ${item.highlight ? 'bg-warning bg-opacity-25' : 'bg-light'}`}>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h6 className="mb-1">{item.title}</h6>
-                      <small className="text-muted">Due by {item.due}</small>
-                    </div>
-                    <div>
-                      <strong>₹{item.amount}</strong><br />
-                      <button className="btn btn-sm btn-primary mt-1">{item.highlight ? 'Pay Now' : 'Pay Later'}</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="col-lg-4">
+                <QuickPay />
+                <HelpSupport />
             </div>
-          </div>
-
-          {/* 🔹 Right Column */}
-          <div className="col-md-4">
-
-            {/* Quick Pay */}
-            <div className="card shadow-sm p-3 mb-4">
-              <h6 className="mb-3">Quick Pay</h6>
-              <button className="btn btn-primary w-100 mb-3">💳 Pay Outstanding Balance</button>
-              <p className="fw-bold mb-1">Saved Payment Methods</p>
-              <div className="mb-2"><input type="radio" name="method" /> Visa ending in 0322</div>
-              <div className="mb-2"><input type="radio" name="method" /> Bank Account</div>
-              <button className="btn btn-outline-secondary btn-sm w-100 mb-3">+ Add Payment Method</button>
-              <p className="fw-bold mb-1">Receipts & Documents</p>
-              <button className="btn btn-light btn-sm w-100 mb-2">📄 Download All Receipts</button>
-              <button className="btn btn-light btn-sm w-100">📁 Print Fees Statement</button>
-            </div>
-
-            {/* Help and Support */}
-            <div className="card shadow-sm p-3">
-              <h6 className="mb-3">Help & Support</h6>
-              <ul className="list-unstyled small">
-                <li><strong>📌 Payment FAQs</strong><br /><a href="#">View Help</a></li>
-                <li className="mt-2"><strong>📞 Contact Finance Office</strong><br />
-                  <a href="mailto:support@campus.com">support@campus.com</a><br />
-                  <span>+91 98451 12345</span>
-                </li>
-                <li className="mt-2"><strong>📅 Schedule an Appointment</strong><br />
-                  <a href="#">Book Appointment</a>
-                </li>
-              </ul>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-muted mt-4 small">
-          <i className="bi bi-x-diamond-fill"></i> Designed and developed by ZoroTeam © 2025 Zoro Innovations
-        </div>
+        <footer className="d-flex justify-content-between text-muted small mt-4 pt-4 border-top">
+            <p><i className="bi bi-x-diamond-fill me-2"></i>Designed and developed by ZoroTeam</p>
+            <p>© 2025 Zoro Innovations</p>
+        </footer>
       </div>
-    </Layout>
+    </div>
   );
 };
 

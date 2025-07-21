@@ -1,129 +1,200 @@
-import React, { useState } from 'react';
-import Layout from '../components/Layout';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import logo from '../assets/campuscore.jpeg';
+// --- Reusable Helper Components for Mentor Page ---
 
-const Mentor = () => {
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    { from: 'mentor', text: 'I will look at it by today.', time: '12:03 p.m.' },
-    { from: 'student', text: 'Sir, I also have question about the assignment due.', time: '12:15 p.m.' },
-    { from: 'mentor', text: 'You can submit it on Tuesday.', time: '12:24 p.m.' },
-    { from: 'student', text: 'Okay, thank you sir.', time: '12:26 p.m.' },
-    { from: 'mentor', text: 'Anyother doubts ?', time: '12:37 p.m.' },
-    { from: 'student', text: `No sir, it's clear. Thank you.`, time: '12:42 p.m.' },
-  ]);
+// Chat Sidebar Component
+const ChatSidebar = () => {
+    const facultyList = [
+        { name: 'Olivia Mitchell', time: '8:00 p.m.' },
+        { name: 'Benjamin', time: '6:47 p.m.' },
+        { name: 'Daniel Miller', time: '4:51 p.m.' },
+        { name: 'John Smith', time: '12:42 p.m.', active: true },
+    ];
 
-  const handleSend = () => {
-    if (message.trim()) {
-      setMessages([...messages, { from: 'student', text: message, time: '12:45 p.m.' }]);
-      setMessage('');
-    }
-  };
-
-  const facultyList = [
-    { name: 'Olivia Mitchell', time: '8:00 p.m.' },
-    { name: 'Benjamin', time: '6:47 p.m.' },
-    { name: 'Daniel Miller', time: '4:51 p.m.' },
-    { name: 'John Smith', time: '12:42 p.m.' }
-  ];
-
-  return (
-    <Layout>
-      <div className="container-fluid px-4">
-        {/* 🔷 Top Banner */}
-        <div className="bg-primary text-white p-4 rounded-3 d-flex justify-content-between align-items-center mb-4" style={{ background: 'linear-gradient(to right, #6366F1, #2563EB)' }}>
-          <div>
-            <h5 className="fw-bold">Welcome back, Dev!</h5>
-            <p className="mb-0 small">
-              Wednesday, June 11, 2025 | Spring Semester 2025<br />
-              Student ID: ST2023456
-            </p>
-          </div>
-          <div className="bg-white text-dark p-3 rounded shadow-sm text-end" style={{ minWidth: '220px' }}>
-            <strong className="d-block">Next Class:</strong>
-            <span className="text-primary">Advanced Mathematics in 45 minutes</span>
-          </div>
-        </div>
-
-        {/* 🔷 Nav Bar */}
-        <div className="bg-white d-flex justify-content-around py-2 rounded-3 mb-4 shadow-sm">
-          {[
-            { label: 'Home', icon: 'house', path: '/student' },
-            { label: 'Schedule', icon: 'calendar-event', path: '/schedule' },
-            { label: 'CourseSetup', icon: 'book', path: '/CourseSetup' },
-            { label: 'Result', icon: 'bar-chart', path: 'Result' },
-            { label: 'Fees', icon: 'receipt', path: '/fees' },
-            { label: 'Other', icon: 'chat-dots-fill', path: '/others' },
-            { label: 'Mentor', icon: 'person', path: '/mentor' }
-          ].map((item, idx) => (
-            <a key={idx} href={item.path} className="text-dark text-decoration-none text-center small">
-              <div><i className={`bi bi-${item.icon} fs-5`}></i></div>
-              {item.label}
-            </a>
-          ))}
-        </div>
-
-        {/* 🔷 Chat Layout */}
-        <div className="row bg-white shadow-sm rounded-3" style={{ minHeight: '550px' }}>
-          {/* 🔹 Sidebar */}
-          <div className="col-md-3 border-end p-3">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <button className="btn btn-dark btn-sm">CHAT</button>
-              <button className="btn btn-outline-secondary btn-sm">CALLS</button>
+    return (
+        <div className="d-flex flex-column h-100 p-3">
+            <div className="btn-group w-100 mb-3" role="group">
+                <button type="button" className="btn btn-dark">CHAT</button>
+                <button type="button" className="btn btn-outline-secondary">CALLS</button>
             </div>
-            <input type="text" className="form-control mb-3" placeholder="🔍 Search faculty" />
-            <ul className="list-unstyled">
-              {facultyList.map((f, i) => (
-                <li key={i} className="d-flex justify-content-between align-items-center py-2 border-bottom">
-                  <div><i className="bi bi-person-circle me-2"></i>{f.name}</div>
-                  <small className="text-muted">{f.time}</small>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* 🔹 Chat Window */}
-          <div className="col-md-9 d-flex flex-column justify-content-between p-3">
-            <div>
-              <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
-                <div><i className="bi bi-person-circle me-2"></i><strong>John Smith</strong></div>
-                <i className="bi bi-telephone-fill text-primary"></i>
-              </div>
-
-              {/* Chat Messages */}
-              <div className="mb-3" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                {messages.map((msg, i) => (
-                  <div key={i} className={`d-flex mb-3 ${msg.from === 'student' ? 'justify-content-end' : 'justify-content-start'}`}>
-                    <div className={`p-2 rounded-3 ${msg.from === 'student' ? 'bg-primary text-white' : 'bg-light text-dark'}`} style={{ maxWidth: '70%' }}>
-                      <div>{msg.text}</div>
-                      <small className="text-muted d-block text-end" style={{ fontSize: '0.75rem' }}>{msg.time}</small>
-                    </div>
-                  </div>
+            <div className="input-group mb-3">
+                <span className="input-group-text bg-light-subtle border-0"><i className="bi bi-search"></i></span>
+                <input type="text" className="form-control bg-light-subtle border-0" placeholder="Search faculty" />
+            </div>
+            <div className="list-group list-group-flush">
+                {facultyList.map(faculty => (
+                    <a href="#" key={faculty.name} className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center border-0 rounded-3 mb-1 ${faculty.active ? 'active' : ''}`}>
+                        <div className="d-flex align-items-center">
+                            <i className="bi bi-person-circle fs-4 me-3"></i>
+                            <span className="fw-semibold small">{faculty.name}</span>
+                        </div>
+                        <span className="small text-muted">{faculty.time}</span>
+                    </a>
                 ))}
-              </div>
+            </div>
+        </div>
+    );
+};
+
+// Chat Window Component
+const ChatWindow = () => {
+    const [messages, setMessages] = useState([
+        { from: 'mentor', text: 'I will look at it by today.', time: '12:03 p.m.' },
+        { from: 'student', text: 'Sir, I also have question about the assignment due.', time: '12:15 p.m.' },
+        { from: 'mentor', text: 'You can submit it on Tuesday.', time: '12:24 p.m.' },
+        { from: 'student', text: 'Okay, thank you sir.', time: '12:26 p.m.' },
+        { from: 'mentor', text: 'Anyother doubts ?', time: '12:37 p.m.' },
+        { from: 'student', text: "No sir, it's clear. Thank you.", time: '12:42 p.m.' },
+    ]);
+    const [newMessage, setNewMessage] = useState('');
+
+    const handleSend = () => {
+        if (newMessage.trim()) {
+            setMessages([...messages, { from: 'student', text: newMessage, time: 'now' }]);
+            setNewMessage('');
+        }
+    };
+
+    return (
+        <div className="d-flex flex-column h-100">
+            {/* Chat Header */}
+            <div className="p-3 border-bottom d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
+                    <i className="bi bi-person-circle fs-4 me-3"></i>
+                    <span className="fw-bold">John Smith</span>
+                </div>
+                <button className="btn btn-link text-secondary"><i className="bi bi-telephone-fill fs-5"></i></button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-grow-1 p-4" style={{ overflowY: 'auto' }}>
+                {messages.map((msg, i) => (
+                    <div key={i} className={`d-flex mb-3 ${msg.from === 'student' ? 'justify-content-end' : 'justify-content-start'}`}>
+                        <div className={`p-3 rounded-3 ${msg.from === 'student' ? 'bg-primary text-white' : 'bg-body-secondary'}`} style={{ maxWidth: '70%' }}>
+                            <p className="small mb-1">{msg.text}</p>
+                            <p className="small text-muted mb-0 text-end" style={{ fontSize: '0.75rem' }}>{msg.time}</p>
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* Message Input */}
-            <div className="d-flex align-items-center gap-2">
-              <i className="bi bi-paperclip fs-4"></i>
-              <input
-                type="text"
-                placeholder="Type a message"
-                className="form-control"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-              <i className="bi bi-mic fs-4 text-muted"></i>
-              <i className="bi bi-send-fill fs-4 text-primary" role="button" onClick={handleSend}></i>
+            <div className="p-3 bg-body-tertiary">
+                <div className="input-group">
+                    <button className="btn btn-light"><i className="bi bi-paperclip"></i></button>
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Type a message"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    />
+                    <button className="btn btn-light"><i className="bi bi-mic"></i></button>
+                    <button className="btn btn-primary" onClick={handleSend}><i className="bi bi-send-fill"></i></button>
+                </div>
             </div>
-          </div>
+        </div>
+    );
+};
+
+
+// --- Main Mentor Component ---
+
+const Mentor = () => {
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-bs-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+  };
+  
+  const navItems = ['Home', 'Schedule', 'Course Setup', 'Analytics', 'Fees', 'Other', 'Mentor'];
+  const navIcons = ['house-door-fill', 'calendar-week-fill', 'book-fill', 'bar-chart-line-fill', 'receipt', 'three-dots', 'person-lines-fill'];
+
+  return (
+    <div className="bg-body-tertiary">
+      <div className="container-fluid p-4">
+        {/* Header */}
+        <header className="navbar navbar-expand-lg bg-body rounded-3 shadow-sm p-3 mb-4">
+            <Link className="navbar-brand" to="#">
+                 <img src={logo} alt="Campus Core Logo" style={{height: '40px'}}/>
+            </Link>
+            <div className="d-flex align-items-center ms-auto">
+                <button className="btn btn-link text-secondary"><i className="bi bi-search fs-5"></i></button>
+                <div className="form-check form-switch mx-3">
+                    <input className="form-check-input" type="checkbox" role="switch" id="theme-switch-mentor" onChange={toggleTheme} checked={theme === 'dark'}/>
+                </div>
+                <button className="btn btn-link text-secondary"><i className="bi bi-bell fs-5"></i></button>
+                <div className="dropdown">
+                    <button className="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                        <img src="https://placehold.co/32x32/EFEFEF/000000?text=D" alt="Dev" className="rounded-circle me-2"/>
+                        <span className="small fw-semibold">Dev</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        {/* Welcome Banner */}
+        <div className="p-4 rounded-3 shadow-lg mb-4 text-white d-flex justify-content-between align-items-center" style={{background: 'linear-gradient(to right, #0d6efd, #6610f2)'}}>
+            <div>
+                <h2 className="fw-bold">Welcome back, Dev!</h2>
+                <p className="small mb-0">Wednesday, June 11, 2025 | Spring Semester 2025</p>
+                <p className="small mb-0">Student ID: ST2023456</p>
+            </div>
+            <div className="p-3 rounded-3 text-center" style={{backgroundColor: 'rgba(255, 255, 255, 0.2)'}}>
+                <p className="small mb-1">Next Class</p>
+                <p className="fw-semibold mb-1">Advanced Mathematics</p>
+                <p className="small mb-0">in 45 minutes</p>
+            </div>
+        </div>
+        
+        {/* Main Navigation */}
+        <div className="d-flex nav-bar gap-5 mb-4 flex-wrap"> 
+                  {[
+                  { name: 'Home', to: '/student' },
+                  { name: 'Schedule', to: '/schedule' },
+                  { name: 'CourseSetup', to: '/CourseSetup' },
+                  { name: 'Result', to: '/result' },
+                  { name: 'Fees', to: '/fees' },
+                  { name: 'Other', to: '/Others' },
+                  { name: 'Mentor', to: '/Mentor' }
+                ].map((item, index) => (
+                  <Link
+                    key={index}
+                    to={item.to}
+                    className="btn no-border"
+                    style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#000' }}
+                  >
+                    <i className={`bi bi-${index % 2 === 0 ? 'house' : 'book'}`}></i> {item.name}
+                  </Link>
+                ))}
+                
+                </div>
+
+        {/* Main Chat Content */}
+        <div className="card shadow-sm">
+            <div className="row g-0" style={{minHeight: '65vh'}}>
+                <div className="col-lg-4 border-end">
+                    <ChatSidebar />
+                </div>
+                <div className="col-lg-8">
+                    <ChatWindow />
+                </div>
+            </div>
         </div>
 
         {/* Footer */}
-        <div className="text-center text-muted mt-4 small">
-          <i className="bi bi-x-diamond-fill"></i> Designed and developed by ZoroTeam © 2025 Zoro Innovations
-        </div>
+        <footer className="d-flex justify-content-between text-muted small mt-4 pt-4 border-top">
+            <p><i className="bi bi-x-diamond-fill me-2"></i>Designed and developed by ZoroTeam</p>
+            <p>© 2025 Zoro Innovations</p>
+        </footer>
       </div>
-    </Layout>
+    </div>
   );
 };
 
